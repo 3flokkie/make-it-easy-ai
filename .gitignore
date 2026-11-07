@@ -1,0 +1,25 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+client_secret.json
+*.pem
+*.key
+
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Generated media and local output
+output
+output/
+assets/images/
+*TEMP_MPY_*.mp4
+token.pickle
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
