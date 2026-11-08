@@ -18,6 +18,8 @@ output/
 assets/images/
 *TEMP_MPY_*.mp4
 token.pickle
+series_state.json
+*.mp4
 
 # IDE and OS files
 .idea/

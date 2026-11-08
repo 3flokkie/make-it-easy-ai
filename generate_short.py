@@ -1,3 +1,9 @@
+"""Legacy demo pipeline.
+
+The production horror-series pipeline is ``main-pipeline.py``. This file is
+kept only as an old gTTS/MoviePy experiment and is not part of production.
+"""
+
 from pathlib import Path
 from gtts import gTTS
 from PIL import Image, ImageDraw
