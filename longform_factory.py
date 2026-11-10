@@ -219,6 +219,22 @@ def generate_longform_script(
   ]
 }}
 """
+    # 🌟 Priority 1: Claude Director (Opus/Sonnet) for viral storytelling
+    try:
+        import claude_director
+        c_res = claude_director.ask_claude_director(prompt)
+        if c_res:
+            import json, re
+            jm = re.search(r'\{.*\}', c_res, re.DOTALL)
+            if jm:
+                c_data = json.loads(jm.group(0))
+                if 'chapters' in c_data and len(c_data['chapters']) >= 2:
+                    print(f"🎭 [Claude Director] Сценарий от Claude Pro успешно внедрён: «{c_data.get('title')}» ({len(c_data['chapters'])} глав)")
+                    save_history(c_data.get('title', ''))
+                    return c_data
+    except Exception as ce:
+        print(f"⚠️ [Claude Director fallback]: {ce}")
+
     candidate_models = [
         os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite"),
         "gemini-3.1-flash-lite",
