@@ -1118,12 +1118,13 @@ def build_longform_and_waterfall_shorts(
         short_video_path = SHORTS_WATERFALL_DIR / f"whatif_short_{timestamp}_{tag}.mp4"
 
         print(f"📱 [3/5] [{tag}] Shorts Sniper: создаём вертикальный 9:16 Шортс-тизер из Главы {teaser_idx + 1}...")
+        shorts_voice = os.getenv("SHORTS_VOICE_ENGINE", "elevenlabs" if os.getenv("ELEVENLABS_API_KEY") else "edge")
         render_chapter_video(
             {**teaser_ch, "chapter_title": short_hook},
             teaser_idx,
             short_video_path,
             lang=lang_code,
-            voice_engine=voice_engine,
+            voice_engine=shorts_voice,
             w=1080,
             h=1920,
             is_vertical=True,

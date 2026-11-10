@@ -122,7 +122,7 @@ def run_slot(slot: str) -> None:
         env_cartoon = env.copy()
         env_cartoon["ENABLE_VOICE"] = "1"
         env_cartoon["ENABLE_ENGLISH"] = "1"
-        env_cartoon["ELEVENLABS_EN_EDGE"] = "1"  # Экономия 50% токенов ElevenLabs на EN-версии!
+        env_cartoon["ELEVENLABS_EN_EDGE"] = "0"  # Максимальное премиум качество ElevenLabs для всех Shorts!
         env_cartoon["DEFER_EN_UPLOAD"] = "1"
         _run_step(
             "Генерация 2D-мультфильма Make It Easy AI (взрывные первые 5 сек)",
@@ -144,10 +144,12 @@ def run_slot(slot: str) -> None:
         if not flushed:
             # Чередуем язык главного выпуска по дням (нечётные дни — RU, чётные — EN) или запускаем RU
             lang_today = "ru" if datetime.now().day % 2 == 1 else "en"
+            env_long = env.copy()
+            env_long["SHORTS_VOICE_ENGINE"] = "elevenlabs"  # Топовый сочный голос ElevenLabs для Shorts-тизера!
             _run_step(
                 f"Большой выпуск «ЧТО, ЕСЛИ?» 16:9 (< 15 мин) + Shorts-тизер ({lang_today.upper()})",
-                [sys.executable, str(BASE_DIR / "longform_factory.py"), "--chapters", "4", "--scenes-per-chapter", "5", "--lang", lang_today],
-                env,
+                [sys.executable, str(BASE_DIR / "longform_factory.py"), "--chapters", "4", "--scenes-per-chapter", "5", "--lang", lang_today, "--shorts-voice", "elevenlabs"],
+                env_long,
             )
 
     elif slot == "2030":
