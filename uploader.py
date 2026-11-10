@@ -155,3 +155,20 @@ def upload_short(
             enqueue_failed_upload(video_path, title, description)
             return None
         raise
+
+
+def set_video_thumbnail(video_id: str, thumbnail_path: str) -> bool:
+    """Загружает кликабельное превью (Thumbnail) для видео на YouTube."""
+    if not os.path.exists(thumbnail_path):
+        print(f"⚠️ Файл превью не найден: {thumbnail_path}")
+        return False
+    try:
+        youtube = get_authenticated_service()
+        media = MediaFileUpload(thumbnail_path, mimetype="image/png", resumable=True)
+        req = youtube.thumbnails().set(videoId=video_id, media_body=media)
+        res = req.execute()
+        print(f"🖼️ Превью успешно установлено для https://youtu.be/{video_id}")
+        return True
+    except Exception as e:
+        print(f"⚠️ Не удалось установить превью для {video_id} (нужен подтверждённый по SMS аккаунт YouTube): {e}")
+        return False
