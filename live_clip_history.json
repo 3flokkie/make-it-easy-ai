@@ -1,0 +1,22 @@
+[
+  {
+    "file": "/Users/sashasyrota/PycharmProjects/WelcomeScreen/scripts/output/live_clips/GBFIOJkK-6c_20261119_100912/short_GBFIOJkK-6c_20261119_100912.mp4",
+    "source": "https://www.youtube.com/watch?v=GBFIOJkK-6c",
+    "video_id": "GBFIOJkK-6c",
+    "triggered_at": "2026-11-19T10:09:07.989686",
+    "window_msgs": 8,
+    "window_rate": 1.6,
+    "baseline_rate": 0.17,
+    "uploaded_id": "BSLYyAnBlp8"
+  },
+  {
+    "file": "/Users/sashasyrota/PycharmProjects/WelcomeScreen/scripts/output/live_clips/GBFIOJkK-6c_20261119_102309/short_GBFIOJkK-6c_20261119_102309.mp4",
+    "source": "https://www.youtube.com/watch?v=GBFIOJkK-6c",
+    "video_id": "GBFIOJkK-6c",
+    "triggered_at": "2026-11-19T10:23:05.675259",
+    "window_msgs": 11,
+    "window_rate": 2.2,
+    "baseline_rate": 0.23,
+    "uploaded_id": "EL67iWurVbM"
+  }
+]

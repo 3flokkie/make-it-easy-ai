@@ -1,3 +1,4 @@
+import json
 #!/usr/bin/env python3
 """
 Make It Easy AI — Autonomous Long-Form + Shorts Waterfall Factory ("ЧТО, ЕСЛИ?" Style)
@@ -224,7 +225,7 @@ def generate_longform_script(
         import claude_director
         c_res = claude_director.ask_claude_director(prompt)
         if c_res:
-            import json, re
+            import re
             jm = re.search(r'\{.*\}', c_res, re.DOTALL)
             if jm:
                 c_data = json.loads(jm.group(0))
@@ -259,6 +260,7 @@ def generate_longform_script(
         except Exception as e:
             last_err = e
             print(f"⚠️ Попытка {attempt + 1}/4 ({model_name}): {e}")
+            time.sleep(3 * (attempt + 1))
             time.sleep(2)
     raise RuntimeError(f"Не удалось сгенерировать сценарий: {last_err}")
 

@@ -148,7 +148,7 @@ def run_slot(slot: str) -> None:
             env_long["SHORTS_VOICE_ENGINE"] = "elevenlabs"  # Топовый сочный голос ElevenLabs для Shorts-тизера!
             _run_step(
                 f"Большой выпуск «ЧТО, ЕСЛИ?» 16:9 (< 15 мин) + Shorts-тизер ({lang_today.upper()})",
-                [sys.executable, str(BASE_DIR / "longform_factory.py"), "--chapters", "4", "--scenes-per-chapter", "5", "--lang", lang_today, "--shorts-voice", "elevenlabs"],
+                [sys.executable, str(BASE_DIR / "longform_factory.py"), "--chapters", "4", "--scenes-per-chapter", "5", "--lang", lang_today],
                 env_long,
             )
 

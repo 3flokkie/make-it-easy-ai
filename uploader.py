@@ -9,20 +9,23 @@ from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
 from google.auth.transport.requests import Request
 
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+SCOPES = [
+    "https://www.googleapis.com/auth/youtube.upload",
+    "https://www.googleapis.com/auth/youtube.force-ssl",
+]
 BASE_DIR = Path(__file__).resolve().parent.parent
 SCRIPT_DIR = Path(__file__).resolve().parent
 QUEUE_FILE = BASE_DIR / "output" / "pending_youtube_queue.json"
 
 
-def get_authenticated_service():
-    """Авторизуется в YouTube API (использует сохранённый token.pickle)."""
+def get_authenticated_service(token_name: str = "token.pickle"):
+    """Авторизуется в YouTube API (использует сохранённый токен канала)."""
     creds = None
-    token_path = BASE_DIR / "token.pickle"
+    token_path = BASE_DIR / token_name
     client_secret_path = BASE_DIR / "client_secret.json"
 
-    if not token_path.exists() and (SCRIPT_DIR / "token.pickle").exists():
-        token_path = SCRIPT_DIR / "token.pickle"
+    if not token_path.exists() and (SCRIPT_DIR / token_name).exists():
+        token_path = SCRIPT_DIR / token_name
 
     if token_path.exists():
         with open(token_path, "rb") as token:
@@ -103,9 +106,10 @@ def upload_short(
     title: str,
     description: str = "#shorts #ai #makeiteasyai",
     enqueue_on_limit: bool = True,
+    token_name: str = "token.pickle",
 ) -> str | None:
     """Загружает готовый файл на YouTube с авто-определением языка (RU/EN) и защитой от потери при uploadLimitExceeded."""
-    youtube = get_authenticated_service()
+    youtube = get_authenticated_service(token_name=token_name)
 
     has_cyrillic = bool(re.search(r"[а-яА-ЯёЁ]", f"{title} {description}"))
     is_en = str(video_path).endswith("_EN.mp4") or not has_cyrillic

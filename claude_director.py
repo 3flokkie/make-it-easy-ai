@@ -53,6 +53,8 @@ def ask_claude_director(prompt: str, fallback_fn=None) -> str:
     
     cmd = [
         "/opt/homebrew/bin/claude",
+        "--model",
+        "fable-5.2",
         "-p",
         prompt
     ]
@@ -60,7 +62,7 @@ def ask_claude_director(prompt: str, fallback_fn=None) -> str:
     env["PATH"] = f"/opt/homebrew/bin:{env.get('PATH', '')}"
 
     try:
-        res = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=60)
+        res = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=150)
         if res.returncode == 0 and res.stdout.strip():
             _increment_daily_calls()
             print("✅ [Claude Director] Сценарий от Claude Pro успешно получен!")
