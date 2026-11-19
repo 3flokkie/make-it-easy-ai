@@ -9,10 +9,15 @@ from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
 from google.auth.transport.requests import Request
 
-SCOPES = [
+ANALYTICS_SCOPE = "https://www.googleapis.com/auth/yt-analytics.readonly"
+# Базовые скоупы, которые уже есть в старых token*.pickle (загрузка + комментарии).
+CORE_SCOPES = [
     "https://www.googleapis.com/auth/youtube.upload",
     "https://www.googleapis.com/auth/youtube.force-ssl",
 ]
+# Новые авторизации сразу запрашивают и аналитику. Старые токены продолжают работать без re-auth:
+# refresh использует скоупы, сохранённые внутри самого токена.
+SCOPES = [*CORE_SCOPES, ANALYTICS_SCOPE]
 BASE_DIR = Path(__file__).resolve().parent.parent
 SCRIPT_DIR = Path(__file__).resolve().parent
 QUEUE_FILE = BASE_DIR / "output" / "pending_youtube_queue.json"
@@ -37,13 +42,40 @@ def _resolve_client_secret(token_name: str) -> Path:
     )
 
 
-def get_authenticated_service(token_name: str = "token.pickle"):
-    """Авторизуется в YouTube API (использует сохранённый токен канала и его GCP client_secret)."""
-    creds = None
-    token_path = BASE_DIR / token_name
+class ScopeMissingError(RuntimeError):
+    """У сохранённого токена нет нужного OAuth-скоупа (например, yt-analytics.readonly)."""
 
+
+def _token_path(token_name: str) -> Path:
+    token_path = BASE_DIR / token_name
     if not token_path.exists() and (SCRIPT_DIR / token_name).exists():
         token_path = SCRIPT_DIR / token_name
+    return token_path
+
+
+def _creds_scopes(creds) -> set[str]:
+    granted = getattr(creds, "granted_scopes", None) or getattr(creds, "scopes", None) or []
+    if isinstance(granted, str):
+        granted = granted.split()
+    return set(granted)
+
+
+def token_has_scope(token_name: str, scope: str = ANALYTICS_SCOPE) -> bool:
+    """Проверяет скоуп сохранённого токена без запуска OAuth-флоу."""
+    token_path = _token_path(token_name)
+    if not token_path.exists():
+        return False
+    try:
+        with open(token_path, "rb") as token:
+            creds = pickle.load(token)
+    except Exception:
+        return False
+    return scope in _creds_scopes(creds)
+
+
+def _load_credentials(token_name: str, scopes: list[str]):
+    creds = None
+    token_path = _token_path(token_name)
 
     if token_path.exists():
         with open(token_path, "rb") as token:
@@ -54,13 +86,37 @@ def get_authenticated_service(token_name: str = "token.pickle"):
             creds.refresh(Request())
         else:
             client_secret_path = _resolve_client_secret(token_name)
-            flow = InstalledAppFlow.from_client_secrets_file(str(client_secret_path), SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file(str(client_secret_path), scopes)
             creds = flow.run_local_server(port=0)
 
         with open(token_path, "wb") as token:
             pickle.dump(creds, token)
 
+    return creds
+
+
+def get_authenticated_service(token_name: str = "token.pickle"):
+    """Авторизуется в YouTube API (использует сохранённый токен канала и его GCP client_secret)."""
+    creds = _load_credentials(token_name, SCOPES)
     return build("youtube", "v3", credentials=creds)
+
+
+def get_analytics_service(token_name: str = "token.pickle"):
+    """YouTube Analytics API v2. Бросает ScopeMissingError, если токен выдан без yt-analytics.readonly.
+
+    Загрузки/комменты при этом не ломаются. Чтобы включить аналитику — удали token-файл
+    и авторизуйся заново (новый флоу уже запрашивает ANALYTICS_SCOPE).
+    """
+    token_path = _token_path(token_name)
+    if token_path.exists() and not token_has_scope(token_name, ANALYTICS_SCOPE):
+        raise ScopeMissingError(
+            f"⚠️ {token_name} не содержит {ANALYTICS_SCOPE}. Аналитика недоступна — "
+            f"удали {token_path.name} и пройди авторизацию заново, чтобы выдать доступ."
+        )
+    creds = _load_credentials(token_name, SCOPES)
+    if ANALYTICS_SCOPE not in _creds_scopes(creds):
+        raise ScopeMissingError(f"⚠️ {token_name}: OAuth не выдал {ANALYTICS_SCOPE}.")
+    return build("youtubeAnalytics", "v2", credentials=creds)
 
 
 def enqueue_failed_upload(video_path: str, title: str, description: str) -> None:

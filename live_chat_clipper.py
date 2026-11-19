@@ -52,6 +52,7 @@ from typing import Iterator
 SCRIPT_DIR = Path(__file__).resolve().parent
 OUT_ROOT = SCRIPT_DIR / "output" / "live_clips"
 HISTORY_FILE = SCRIPT_DIR / "live_clip_history.json"
+OPTIMIZER_CONFIG = SCRIPT_DIR / "optimizer_config.json"  # written by analytics_optimizer.py
 
 WINDOW_SEC = 5.0
 BASELINE_SEC = 30.0
@@ -94,6 +95,42 @@ VIRAL_TITLES = [
 
 def log(msg: str) -> None:
     print(f"[{datetime.now():%H:%M:%S}] {msg}", flush=True)
+
+
+def load_optimizer_weights(kind: str, token: str | None = None, path: Path | None = None) -> dict[str, float]:
+    """Learned weights {text: weight} for kind ('cover_hooks' | 'titles') from optimizer_config.json.
+
+    Prefers the channel entry for `token`, then the cross-channel 'global' block. Any problem → {}.
+    """
+    try:
+        cfg = json.loads((path or OPTIMIZER_CONFIG).read_text(encoding="utf-8"))
+        blocks = []
+        if token:
+            blocks.append(((cfg.get("channels") or {}).get(token) or {}).get("weights"))
+        blocks.append((cfg.get("global") or {}).get("weights"))
+        for b in blocks:
+            w = (b or {}).get(kind) if isinstance(b, dict) else None
+            if isinstance(w, dict) and w:
+                return {str(k): float(v) for k, v in w.items()
+                        if isinstance(v, (int, float)) and math.isfinite(v) and v > 0}
+    except Exception:  # noqa: BLE001 — missing/malformed config must never break a clip
+        pass
+    return {}
+
+
+def weighted_pick(options: list[str], kind: str, token: str | None = None, path: Path | None = None,
+                  rng: random.Random | None = None) -> str:
+    """Weighted random choice using optimizer weights; options without a learned weight get 1.0.
+    Falls back to uniform random.choice when weights are absent/invalid."""
+    r = rng or random
+    try:
+        weights = load_optimizer_weights(kind, token, path)
+        if weights:
+            ws = [max(0.01, min(10.0, weights.get(o, 1.0))) for o in options]
+            return r.choices(options, weights=ws, k=1)[0]
+    except Exception:  # noqa: BLE001
+        pass
+    return r.choice(options)
 
 
 def has_module(name: str) -> bool:
@@ -1142,6 +1179,7 @@ class Clipper:
         events = caption_events(words, clip_len)
         ratio = job.win_rate / job.base_rate if job.base_rate > 0 else float(job.n_win)
         hook = a.hook_text or f"CHAT EXPLODED x{ratio:.0f}"
+        headline = weighted_pick(VIRAL_COVER_HOOKS, "cover_hooks", a.token)
         chat_overlays: list[tuple[Path, float, float, int]] = []
         if job.chat:
             try:
@@ -1164,14 +1202,15 @@ class Clipper:
 
         if self.libass:
             ass = out_dir / "subs.ass"
-            write_ass(events, hook, ass)
+            write_ass(events, f"{headline}\\N{hook}" if hook else "", ass)
             esc = str(ass).replace("\\", "\\\\").replace(":", "\\:").replace("'", "\\'")
             extra, graph, last = overlay_graph(f"setpts=PTS-STARTPTS,{crop},subtitles='{esc}'", chat_overlays)
             amap = f"{len(chat_overlays) + 1}:a:0" if silent else "0:a:0"  # silence input comes after the PNGs
             run_ffmpeg(self.ffmpeg, [*inputs, *extra, *silent, "-filter_complex", ";".join(graph),
                                      "-map", f"[{last}]", "-map", amap, *enc, str(final)], "render+subs")
         else:
-            self._render_pillow(inputs, silent, crop, enc, events, hook, out_dir, final, chat_overlays)
+            self._render_pillow(inputs, silent, crop, enc, events, hook, out_dir, final, chat_overlays,
+                                headline=headline)
 
         fp = probe_media(self.ffprobe, final)
         if fp and not (fp.has_video and fp.has_audio):
@@ -1182,10 +1221,12 @@ class Clipper:
                   "triggered_at": datetime.fromtimestamp(job.triggered_at).isoformat(),
                   "window_msgs": job.n_win, "window_rate": round(job.win_rate, 2),
                   "baseline_rate": round(job.base_rate, 2), "chat_overlay_msgs": len(job.chat),
-                  "uploaded_id": None}
+                  "spike_ratio": round(ratio, 2), "spike_mult": a.spike_mult, "clip_sec": round(clip_len, 1),
+                  "hook_headline": headline if hook else None, "hook_subline": hook or None,
+                  "title": self._build_title(words), "token": a.token, "uploaded_id": None}
 
         if not a.no_upload:
-            result["uploaded_id"] = self._upload(final, words)
+            result["uploaded_id"] = self._upload(final, result["title"])
         append_history(result)
 
     @staticmethod
@@ -1223,13 +1264,14 @@ class Clipper:
         img.save(path)
 
     def _render_pillow(self, inputs, silent, crop, enc, events, hook, out_dir: Path, final: Path,
-                       chat_overlays: list[tuple[Path, float, float, int]] | None = None) -> None:
+                       chat_overlays: list[tuple[Path, float, float, int]] | None = None,
+                       headline: str | None = None) -> None:
         cap_dir = out_dir / "captions"
         cap_dir.mkdir(exist_ok=True)
         overlays: list[tuple[Path, float, float, int]] = []
         if hook:
             p = cap_dir / "hook.png"
-            headline = random.choice(VIRAL_COVER_HOOKS)
+            headline = headline or weighted_pick(VIRAL_COVER_HOOKS, "cover_hooks", self.args.token)
             self._render_hook_banner_png(headline, hook, p)
             overlays.append((p, 0.0, HOOK_SEC, 95))
         overlays += chat_overlays or []
@@ -1244,20 +1286,22 @@ class Clipper:
         run_ffmpeg(self.ffmpeg, [*inputs, *extra_inputs, *silent, "-filter_complex", ";".join(graph),
                                  "-map", f"[{last}]", "-map", amap, *enc, str(final)], "render+pillow subs")
 
-    def _upload(self, final: Path, words: list[dict]) -> str | None:
+    def _build_title(self, words: list[dict]) -> str:
+        spoken = " ".join(w["word"] for w in words[:5]).strip()
+        base_title = weighted_pick(VIRAL_TITLES, "titles", self.args.token)
+        if spoken and len(base_title) + len(spoken) + 4 <= 100:
+            title = base_title.replace("#shorts", f"({spoken}) #shorts")
+        else:
+            title = base_title
+        return re.sub(r"\s+", " ", title)[:100]
+
+    def _upload(self, final: Path, title: str) -> str | None:
         a = self.args
         try:
             from uploader import upload_short  # type: ignore
         except Exception as e:  # noqa: BLE001
             log(f"❌ cannot import uploader.upload_short: {e}")
             return None
-        spoken = " ".join(w["word"] for w in words[:5]).strip()
-        base_title = random.choice(VIRAL_TITLES)
-        if spoken and len(base_title) + len(spoken) + 4 <= 100:
-            title = base_title.replace("#shorts", f"({spoken}) #shorts")
-        else:
-            title = base_title
-        title = re.sub(r"\s+", " ", title)[:100]
         desc = (f"{a.description}\n\nClipped live from: {a.url}\n"
                 f"Stream: {self.stream.title}\n#shorts #gta6 #gaming #livestream")
         log(f"⬆️  uploading as '{title}' (token: {a.token})")
