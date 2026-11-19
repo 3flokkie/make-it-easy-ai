@@ -1,0 +1,366 @@
+{
+  "version": 1,
+  "channels": {
+    "token.pickle": {
+      "updated_at": "2026-11-19T15:30:53+00:00",
+      "channel_title": "Make It Easy Ai",
+      "data_source": "analytics",
+      "videos_analyzed": 11,
+      "runs": 2,
+      "weights": {
+        "cover_hooks": {
+          "GTA 6 WHAT?! HOW?!": 1.0,
+          "HOW DID HE DO THAT?!": 1.0,
+          "NO WAY THIS HAPPENED!": 1.0,
+          "WAIT FOR THE END...": 1.0
+        },
+        "titles": {
+          "GTA 6 WHAT?! HOW DID HE DO THAT?! 😱🔥 #shorts": 1.0,
+          "GTA 6 NO WAY THIS HAPPENED LIVE 🤯🔥 #shorts": 1.0,
+          "GTA 6 CHAT WENT INSANE AT THIS MOMENT 💀🔥 #shorts": 1.0,
+          "GTA 6 WAIT FOR THE ENDING 😳🔥 #shorts": 1.0
+        }
+      },
+      "arm_stats": {
+        "cover_hooks": {
+          "GTA 6 WHAT?! HOW?!": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          },
+          "HOW DID HE DO THAT?!": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          },
+          "NO WAY THIS HAPPENED!": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          },
+          "WAIT FOR THE END...": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          }
+        },
+        "titles": {
+          "GTA 6 WHAT?! HOW DID HE DO THAT?! 😱🔥 #shorts": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          },
+          "GTA 6 NO WAY THIS HAPPENED LIVE 🤯🔥 #shorts": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          },
+          "GTA 6 CHAT WENT INSANE AT THIS MOMENT 💀🔥 #shorts": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          },
+          "GTA 6 WAIT FOR THE ENDING 😳🔥 #shorts": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          }
+        }
+      },
+      "recommended": {
+        "clip_sec": 50.5,
+        "spike_mult": 3.0,
+        "topics": [],
+        "avoid_patterns": [],
+        "new_hook_ideas": [],
+        "new_title_ideas": []
+      },
+      "insights": [],
+      "top_videos": [
+        {
+          "title": "Скрестил Mac 8GB и iPhone в один AI-сервер за 0₽ 🤖📱 #shorts",
+          "source": "other",
+          "duration_sec": 71.0,
+          "viral_score": 69.5,
+          "views": 12,
+          "averageViewPercentage": 58.81000000000001,
+          "engagedViews": 5,
+          "subscribersGained": 0,
+          "shares": 1,
+          "likes": 1,
+          "comments": 0,
+          "id": "WndsjO7RjVY"
+        },
+        {
+          "title": "Он обернулся к маме… а там ОН САМ 😱 | Часть 2 #shorts",
+          "source": "other",
+          "duration_sec": 48.0,
+          "viral_score": 64.75,
+          "views": 10,
+          "averageViewPercentage": 49.86,
+          "engagedViews": 7,
+          "subscribersGained": 0,
+          "shares": 0,
+          "likes": 2,
+          "comments": 3,
+          "id": "VuQk8XtsODw"
+        },
+        {
+          "title": "1 человек + 3 AI-агента против студии на 20 сотрудников 🤖⚡ #shorts",
+          "source": "other",
+          "duration_sec": 62.0,
+          "viral_score": 62.75,
+          "views": 212,
+          "averageViewPercentage": 36.82,
+          "engagedViews": 140,
+          "subscribersGained": 0,
+          "shares": 0,
+          "likes": 5,
+          "comments": 0,
+          "id": "EAVzEB7BBcU"
+        }
+      ],
+      "bottom_videos": [
+        {
+          "title": "Gemini Sees The Future — 100% Autonomous AI Video Pipeline #shorts",
+          "source": "other",
+          "duration_sec": 33.0,
+          "viral_score": 37.75,
+          "views": 18,
+          "averageViewPercentage": 26.8,
+          "engagedViews": 6,
+          "subscribersGained": 0,
+          "shares": 0,
+          "likes": 1,
+          "comments": 0,
+          "id": "armPh8aB3Qo"
+        },
+        {
+          "title": "1 AI-агент = $1,000/нед в 2026? 🤖💸 #shorts",
+          "source": "other",
+          "duration_sec": 40.0,
+          "viral_score": 25.25,
+          "views": 4,
+          "averageViewPercentage": 24.9,
+          "engagedViews": 1,
+          "subscribersGained": 0,
+          "shares": 0,
+          "likes": 1,
+          "comments": 0,
+          "id": "R_nDr_CfigI"
+        },
+        {
+          "title": "ИИ-бот для нарезки стримов GTA 6 за 40 секунд 🤖🔥 #shorts",
+          "source": "other",
+          "duration_sec": 55.0,
+          "viral_score": 16.75,
+          "views": 1,
+          "averageViewPercentage": 0,
+          "engagedViews": 0,
+          "subscribersGained": 0,
+          "shares": 0,
+          "likes": 0,
+          "comments": 0,
+          "id": "AH_6rwDcjUQ"
+        }
+      ]
+    },
+    "token_channel2.pickle": {
+      "updated_at": "2026-11-19T12:55:12+00:00",
+      "channel_title": "Make It Easy Ai",
+      "data_source": "analytics",
+      "videos_analyzed": 11,
+      "runs": 1,
+      "weights": {
+        "cover_hooks": {
+          "GTA 6 WHAT?! HOW?!": 1.0,
+          "HOW DID HE DO THAT?!": 1.0,
+          "NO WAY THIS HAPPENED!": 1.0,
+          "WAIT FOR THE END...": 1.0
+        },
+        "titles": {
+          "GTA 6 WHAT?! HOW DID HE DO THAT?! 😱🔥 #shorts": 1.0,
+          "GTA 6 NO WAY THIS HAPPENED LIVE 🤯🔥 #shorts": 1.0,
+          "GTA 6 CHAT WENT INSANE AT THIS MOMENT 💀🔥 #shorts": 1.0,
+          "GTA 6 WAIT FOR THE ENDING 😳🔥 #shorts": 1.0
+        }
+      },
+      "arm_stats": {
+        "cover_hooks": {
+          "GTA 6 WHAT?! HOW?!": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          },
+          "HOW DID HE DO THAT?!": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          },
+          "NO WAY THIS HAPPENED!": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          },
+          "WAIT FOR THE END...": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          }
+        },
+        "titles": {
+          "GTA 6 WHAT?! HOW DID HE DO THAT?! 😱🔥 #shorts": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          },
+          "GTA 6 NO WAY THIS HAPPENED LIVE 🤯🔥 #shorts": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          },
+          "GTA 6 CHAT WENT INSANE AT THIS MOMENT 💀🔥 #shorts": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          },
+          "GTA 6 WAIT FOR THE ENDING 😳🔥 #shorts": {
+            "weight": 1.0,
+            "n": 0,
+            "mean_score": null,
+            "z": null
+          }
+        }
+      },
+      "recommended": {
+        "clip_sec": 46.2,
+        "spike_mult": 3.0,
+        "topics": [],
+        "avoid_patterns": [],
+        "new_hook_ideas": [],
+        "new_title_ideas": []
+      },
+      "insights": [],
+      "top_videos": [
+        {
+          "title": "Скрестил Mac 8GB и iPhone в один AI-сервер за 0₽ 🤖📱 #shorts",
+          "source": "other",
+          "duration_sec": 71.0,
+          "viral_score": 69.5,
+          "views": 12,
+          "averageViewPercentage": 58.81000000000001,
+          "engagedViews": 5,
+          "subscribersGained": 0,
+          "shares": 1,
+          "likes": 1,
+          "comments": 0,
+          "id": "WndsjO7RjVY"
+        },
+        {
+          "title": "Он обернулся к маме… а там ОН САМ 😱 | Часть 2 #shorts",
+          "source": "other",
+          "duration_sec": 48.0,
+          "viral_score": 64.75,
+          "views": 10,
+          "averageViewPercentage": 49.86,
+          "engagedViews": 7,
+          "subscribersGained": 0,
+          "shares": 0,
+          "likes": 2,
+          "comments": 3,
+          "id": "VuQk8XtsODw"
+        },
+        {
+          "title": "1 человек + 3 AI-агента против студии на 20 сотрудников 🤖⚡ #shorts",
+          "source": "other",
+          "duration_sec": 62.0,
+          "viral_score": 62.75,
+          "views": 212,
+          "averageViewPercentage": 36.82,
+          "engagedViews": 140,
+          "subscribersGained": 0,
+          "shares": 0,
+          "likes": 5,
+          "comments": 0,
+          "id": "EAVzEB7BBcU"
+        }
+      ],
+      "bottom_videos": [
+        {
+          "title": "Gemini Sees The Future — 100% Autonomous AI Video Pipeline #shorts",
+          "source": "other",
+          "duration_sec": 33.0,
+          "viral_score": 37.75,
+          "views": 18,
+          "averageViewPercentage": 26.8,
+          "engagedViews": 6,
+          "subscribersGained": 0,
+          "shares": 0,
+          "likes": 1,
+          "comments": 0,
+          "id": "armPh8aB3Qo"
+        },
+        {
+          "title": "1 AI-агент = $1,000/нед в 2026? 🤖💸 #shorts",
+          "source": "other",
+          "duration_sec": 40.0,
+          "viral_score": 25.25,
+          "views": 4,
+          "averageViewPercentage": 24.9,
+          "engagedViews": 1,
+          "subscribersGained": 0,
+          "shares": 0,
+          "likes": 1,
+          "comments": 0,
+          "id": "R_nDr_CfigI"
+        },
+        {
+          "title": "ИИ-бот для нарезки стримов GTA 6 за 40 секунд 🤖🔥 #shorts",
+          "source": "other",
+          "duration_sec": 55.0,
+          "viral_score": 16.75,
+          "views": 1,
+          "averageViewPercentage": 0,
+          "engagedViews": 0,
+          "subscribersGained": 0,
+          "shares": 0,
+          "likes": 0,
+          "comments": 0,
+          "id": "AH_6rwDcjUQ"
+        }
+      ]
+    }
+  },
+  "updated_at": "2026-11-19T15:30:56+00:00",
+  "global": {
+    "weights": {
+      "cover_hooks": {
+        "GTA 6 WHAT?! HOW?!": 1.0,
+        "HOW DID HE DO THAT?!": 1.0,
+        "NO WAY THIS HAPPENED!": 1.0,
+        "WAIT FOR THE END...": 1.0
+      },
+      "titles": {
+        "GTA 6 WHAT?! HOW DID HE DO THAT?! 😱🔥 #shorts": 1.0,
+        "GTA 6 NO WAY THIS HAPPENED LIVE 🤯🔥 #shorts": 1.0,
+        "GTA 6 CHAT WENT INSANE AT THIS MOMENT 💀🔥 #shorts": 1.0,
+        "GTA 6 WAIT FOR THE ENDING 😳🔥 #shorts": 1.0
+      }
+    }
+  }
+}

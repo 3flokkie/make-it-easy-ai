@@ -65,7 +65,7 @@ def generate_smart_reply(comment_text: str, video_title: str) -> str:
                 "Напиши короткий, дружелюбный, живой ответ на русском (1-2 предложения, без воды и официоза). "
                 "Если это шутка или критика — отшутись по-доброму и поблагодари за активность."
             )
-            res = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
+            res = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
             if res.text:
                 return res.text.strip()[:450]
         except Exception:
@@ -117,7 +117,7 @@ def process_channel(token_name: str, my_handle: str, is_gaming_channel: bool = F
                     try:
                         client = genai.Client(api_key=api_key)
                         r = client.models.generate_content(
-                            model="gemini-2.5-flash",
+                            model="gemini-3.5-flash",
                             contents=f"Reply shortly (1 friendly sentence, matching the comment's language) to this YouTube Shorts comment on '{title}': «{text_in}»",
                         )
                         if r.text:

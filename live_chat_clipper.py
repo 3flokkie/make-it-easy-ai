@@ -1263,6 +1263,29 @@ class Clipper:
 
         img.save(path)
 
+    @staticmethod
+    def _render_flash_cover_png(banner_png: Path, out_path: Path) -> Path | None:
+        """Composites a 1080x1920 GTA 6 cover artwork + viral banner for Frame 0 (0.0-0.22s)."""
+        from PIL import Image, ImageDraw, ImageOps
+
+        thumb_dir = SCRIPT_DIR / "assets" / "thumbnails" / "gta6"
+        candidates = sorted([*thumb_dir.glob("*.png"), *thumb_dir.glob("*.jpg")]) if thumb_dir.exists() else []
+        if not candidates:
+            return None
+        bg_path = random.choice(candidates)
+        cover = ImageOps.fit(Image.open(bg_path).convert("RGBA"), (1080, 1920), method=Image.Resampling.LANCZOS)
+        # Subtle dark top gradient so the red/gold banner pops on Frame 0
+        grad = Image.new("RGBA", (1080, 520), (0, 0, 0, 0))
+        gd = ImageDraw.Draw(grad)
+        for y in range(520):
+            alpha = int(175 * (1.0 - y / 520))
+            gd.line([(0, y), (1080, y)], fill=(0, 0, 0, alpha))
+        cover.alpha_composite(grad, (0, 0))
+        banner = Image.open(banner_png).convert("RGBA")
+        cover.alpha_composite(banner, (0, 130))
+        cover.convert("RGB").save(out_path, quality=92)
+        return out_path
+
     def _render_pillow(self, inputs, silent, crop, enc, events, hook, out_dir: Path, final: Path,
                        chat_overlays: list[tuple[Path, float, float, int]] | None = None,
                        headline: str | None = None) -> None:
@@ -1273,7 +1296,12 @@ class Clipper:
             p = cap_dir / "hook.png"
             headline = headline or weighted_pick(VIRAL_COVER_HOOKS, "cover_hooks", self.args.token)
             self._render_hook_banner_png(headline, hook, p)
-            overlays.append((p, 0.0, HOOK_SEC, 95))
+            cover = self._render_flash_cover_png(p, cap_dir / "cover.png")
+            if cover is not None:
+                overlays.append((cover, 0.0, 0.22, 0))
+                overlays.append((p, 0.22, HOOK_SEC, 95))
+            else:
+                overlays.append((p, 0.0, HOOK_SEC, 95))
         overlays += chat_overlays or []
         for n, (s, e, texts, idx) in enumerate(events):
             p = cap_dir / f"cap_{n:04d}.png"

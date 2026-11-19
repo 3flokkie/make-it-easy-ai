@@ -87,7 +87,7 @@ def _load_credentials(token_name: str, scopes: list[str]):
         else:
             client_secret_path = _resolve_client_secret(token_name)
             flow = InstalledAppFlow.from_client_secrets_file(str(client_secret_path), scopes)
-            creds = flow.run_local_server(port=0)
+            creds = flow.run_local_server(port=0, prompt="select_account")
 
         with open(token_path, "wb") as token:
             pickle.dump(creds, token)
@@ -230,16 +230,17 @@ def upload_short(
         raise
 
 
-def set_video_thumbnail(video_id: str, thumbnail_path: str) -> bool:
+def set_video_thumbnail(video_id: str, thumbnail_path: str, token_name: str = "token.pickle") -> bool:
     """Загружает кликабельное превью (Thumbnail) для видео на YouTube."""
     if not os.path.exists(thumbnail_path):
         print(f"⚠️ Файл превью не найден: {thumbnail_path}")
         return False
     try:
-        youtube = get_authenticated_service()
-        media = MediaFileUpload(thumbnail_path, mimetype="image/png", resumable=True)
+        youtube = get_authenticated_service(token_name=token_name)
+        mime = "image/jpeg" if thumbnail_path.lower().endswith((".jpg", ".jpeg")) else "image/png"
+        media = MediaFileUpload(thumbnail_path, mimetype=mime, resumable=True)
         req = youtube.thumbnails().set(videoId=video_id, media_body=media)
-        res = req.execute()
+        req.execute()
         print(f"🖼️ Превью успешно установлено для https://youtu.be/{video_id}")
         return True
     except Exception as e:

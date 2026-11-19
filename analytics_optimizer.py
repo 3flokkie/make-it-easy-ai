@@ -48,7 +48,7 @@ LONGFORM_HISTORY = SCRIPT_DIR / "longform_history.json"
 DEFAULT_TOKENS = ["token.pickle", "token_channel2.pickle", "token_en.pickle", "token_de.pickle"]
 ANALYTICS_METRICS = ["views", "engagedViews", "averageViewDuration", "averageViewPercentage",
                      "likes", "comments", "shares", "subscribersGained"]
-GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_MODEL = "gemini-3.5-flash"
 
 W_MIN, W_MAX = 0.2, 5.0          # clamp for every learned weight
 EMA_ALPHA = 0.5                  # how fast weights move toward the new target
