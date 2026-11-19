@@ -2,7 +2,7 @@
 .env
 .env.*
 !.env.example
-client_secret.json
+client_secret*.json
 *.pem
 *.key
 

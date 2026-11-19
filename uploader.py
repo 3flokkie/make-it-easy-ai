@@ -18,11 +18,29 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 QUEUE_FILE = BASE_DIR / "output" / "pending_youtube_queue.json"
 
 
+def _resolve_client_secret(token_name: str) -> Path:
+    """Подбирает отдельный client_secret_<channel>.json под каждый токен (своя квота GCP на канал)."""
+    candidates: list[str] = []
+    stem = Path(token_name).stem  # e.g. 'token_channel2' -> suffix 'channel2'
+    if stem.startswith("token_") and len(stem) > 6:
+        suffix = stem[6:]
+        candidates.append(f"client_secret_{suffix}.json")
+    candidates.append("client_secret.json")
+
+    for fname in candidates:
+        for folder in (BASE_DIR, SCRIPT_DIR):
+            p = folder / fname
+            if p.exists():
+                return p
+    raise FileNotFoundError(
+        f"❌ Не найден {candidates[0]} или client_secret.json в {BASE_DIR} / {SCRIPT_DIR}."
+    )
+
+
 def get_authenticated_service(token_name: str = "token.pickle"):
-    """Авторизуется в YouTube API (использует сохранённый токен канала)."""
+    """Авторизуется в YouTube API (использует сохранённый токен канала и его GCP client_secret)."""
     creds = None
     token_path = BASE_DIR / token_name
-    client_secret_path = BASE_DIR / "client_secret.json"
 
     if not token_path.exists() and (SCRIPT_DIR / token_name).exists():
         token_path = SCRIPT_DIR / token_name
@@ -35,12 +53,7 @@ def get_authenticated_service(token_name: str = "token.pickle"):
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            if not client_secret_path.exists():
-                client_secret_path = SCRIPT_DIR / "client_secret.json"
-            if not client_secret_path.exists():
-                raise FileNotFoundError(
-                    f"❌ Не найден client_secret.json в {BASE_DIR} или {SCRIPT_DIR}."
-                )
+            client_secret_path = _resolve_client_secret(token_name)
             flow = InstalledAppFlow.from_client_secrets_file(str(client_secret_path), SCOPES)
             creds = flow.run_local_server(port=0)
 
